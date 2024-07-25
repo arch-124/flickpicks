@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="stylem.css">
+    <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=111189&format=png&color=000000" type="image/x-ico">
+    <title>FlickPicks</title>
+</head>
+<body>
+    <header>
+        <video src="all.mp4" autoplay muted loop></video>
+        <nav>
+            <div class="logo_ul">
+                <h1 style="color:beige">FlickPicks</h1>
+                <ul>
+                    <li><a href="Home.html" target="_self">Home</a></li>
+                    <li><a href="indexm.html" target="_self">Movies</a></li>
+                    <li><a href="series.html" target="_self">Series</a></li>
+                    <li><a href="anime.html" target="_self">Anime</a></li>
+                    <li><a href="feedback.html" target="_self">Feedback</a></li>
+                </ul>
+            </div>
+            <div class="search_user">
+                <form id="search_form" onsubmit="return getresults(event)">
+                    <input type="text" placeholder="search..." id="search_input">
+                </form>
+            </div>
+        </nav>
+        <div class="content">
+            <!--h1 id="title">Stranger Things</h1>
+            <p>In 1980s Indiana, a group of young friends witness supernatural forces and secret government exploits. As they search for answers, the children unravel a series of extraordinary mysteries.</p>
+            <div class="details">
+                <h6>A Netflix Original Series</h6>
+                <h5 id="gen">Sci-fi</h5>
+                <h4>2022</h4>
+                <h3 id="rate"><span>IMDB</span> <i class="bi bi-star-fill"></i> 8.4</h3>
+            </div-->
+            <div class="btns">
+                <!--a href="https://www.netflix.com/title/80057281" target="_blank" id="play">Watch <i class="bi bi-play-fill"></i></a-->
+            </div>
+        </div>
+        <section>
+            <h4>Recommendations</h4>
+            <i class="bi bi-chevron-left"></i>
+            <i class="bi bi-chevron-right"></i>
+            <div class="cards" id="recommendations">
+                <!-- Recommendations will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!--a href="indexm.html" style="color: beige;">Back to Home</a-->
+    </header>
+    <script>
+        const omdbApiKey = 'd1ef9208'; // Replace with your OMDb API key
+
+        async function getresults(event) {
+            event.preventDefault();
+            const query = document.getElementById('search_input').value;
+            const pageType = document.location.pathname.includes('series') ? 'series' :
+                             document.location.pathname.includes('movies') ? 'movie' :
+                             document.location.pathname.includes('anime') ? 'anime' : 'movie';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 'title': query, 'type': pageType })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const recommendations = await response.json();
+                displayRecommendations(recommendations, pageType);
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+
+        async function fetchMovieImage(movieTitle) {
+            const omdbUrl = `http://www.omdbapi.com/?apikey=${omdbApiKey}&t=${encodeURIComponent(movieTitle)}`;
+            try {
+                const response = await fetch(omdbUrl);
+                const data = await response.json();
+                if (data.Poster && data.Poster !== "N/A") {
+                    return data.Poster;
+                } else {
+                    return 'C:/Users/archana/OneDrive/Desktop/Movie rec/default_poster.jpg'; // Fallback image if no poster found
+                }
+            } catch (error) {
+                console.error('OMDb fetch error:', error);
+                return 'C:/Users/archana/OneDrive/Desktop/Movie rec/default_poster.jpg'; // Fallback image on error
+            }
+        }
+
+        async function fetchAnimeImage(animeTitle) {
+            const jikanSearchUrl = `https://api.jikan.moe/v4/anime?q=${encodeURIComponent(animeTitle)}`;
+            try {
+                const searchResponse = await fetch(jikanSearchUrl);
+                const searchData = await searchResponse.json();
+                if (searchData.data && searchData.data.length > 0) {
+                    const animeId = searchData.data[0].mal_id;
+                    const jikanPictureUrl = `https://api.jikan.moe/v4/anime/${animeId}/pictures`;
+                    const pictureResponse = await fetch(jikanPictureUrl);
+                    const pictureData = await pictureResponse.json();
+                    if (pictureData.data && pictureData.data.length > 0) {
+                        return pictureData.data[0].jpg.image_url;
+                    }
+                }
+                return 'C:/Users/archana/OneDrive/Desktop/Movie rec/default_poster.jpg'; // Fallback image if no picture found
+            } catch (error) {
+                console.error('Jikan fetch error:', error);
+                return 'C:/Users/archana/OneDrive/Desktop/Movie rec/default_poster.jpg'; // Fallback image on error
+            }
+        }
+
+        async function displayRecommendations(recommendations, pageType) {
+            const recommendationsContainer = document.getElementById('recommendations');
+            recommendationsContainer.innerHTML = '';
+
+            for (const item of recommendations) {
+                const card = document.createElement('a');
+                card.href = '#';
+                card.className = 'card';
+
+                const posterUrl = pageType === 'anime' ? await fetchAnimeImage(item) : await fetchMovieImage(item);
+                const poster = document.createElement('img');
+                poster.src = posterUrl;
+                poster.alt = item;
+                poster.className = 'poster';
+
+                const restCard = document.createElement('div');
+                restCard.className = 'rest_card';
+
+                const cont = document.createElement('div');
+                cont.className = 'cont';
+
+                const h4 = document.createElement('h4');
+                h4.textContent = item;
+
+                const sub = document.createElement('div');
+                sub.className = 'sub';
+
+                const p = document.createElement('p');
+                p.textContent = ''; // You can adjust this to include actual genres and years
+
+                const h3 = document.createElement('h3');
+                h3.innerHTML = '<span></span> <i></i>'; // Adjust the rating accordingly
+
+                sub.appendChild(p);
+                sub.appendChild(h3);
+                cont.appendChild(h4);
+                cont.appendChild(sub);
+                restCard.appendChild(cont);
+                card.appendChild(poster);
+                card.appendChild(restCard);
+                recommendationsContainer.appendChild(card);
+            }
+        }
+
+        // Load recommendations if available in localStorage on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            const recommendations = JSON.parse(localStorage.getItem('recommendResults')) || [];
+            if (recommendations.length > 0) {
+                const pageType = document.location.pathname.includes('series') ? 'series' :
+                                 document.location.pathname.includes('movies') ? 'movie' :
+                                 document.location.pathname.includes('anime') ? 'anime' : 'movie';
+                displayRecommendations(recommendations, pageType);
+            }
+        });
+    </script>
+</body>
+</html>

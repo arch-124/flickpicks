@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="stylem.css">
+    <link rel="shortcut icon" href="https://img.icons8.com/?size=100&id=111189&format=png&color=000000" type="image/x-ico">
+    <title>FlickPicks</title>
+</head>
+<body>
+    <header>
+        <video src="Kalki.mp4" autoplay muted></video>
+        <nav>
+            <div class="logo_ul">
+                <h1 style="color:beige">FlickPicks</h1>
+                <ul>
+                    <li><a href="Home.html" target="_self">Home</a></li>
+                    <li><a href="indexm.html" target="_self">Movies</a></li>
+                    <li><a href="series.html" target="_self">Series</a></li>
+                    <li><a href="anime.html" target="_self">Anime</a></li>
+                    <li><a href="feedback.html" target="_self">Feedback</a></li>
+                </ul>
+            </div>
+            <div class="search_user">
+                <form id="search_form" onsubmit="return getresults(event)">
+                    <input type="text" placeholder="search Movies..." id="search_input">
+                </form>
+            </div>
+        </nav>
+        <div class="content">
+            <h1 id="title">Kalki 2898 AD</h1>
+            <p>A modern avatar of the Hindu god Vishnu, is said to have descended on Earth to protect the world from evil forces.</p>
+            <div class="details">
+                <h6>Vyjayanthi Movies</h6>
+                <h5 id="gen">Sci-fi/Action</h5>
+                <h4>2024</h4>
+                <h3 id="rate"><span>IMDB</span> <i class="bi bi-star-fill"></i>7.7</h3>
+            </div>
+            <div class="btns">
+                <a href="https://www.primevideo.com/detail/BB-Bujji-and-Bhairava/0TKO3BTER9J7380G88F8COK02J" target="_blank" id="play">Watch <i class="bi bi-play-fill"></i></a>
+            </div>
+        </div>
+        <section>
+            <h4>Popular</h4>
+            <i class="bi bi-chevron-left"></i>
+            <i class="bi bi-chevron-right"></i>
+            <div class="cards">
+            <a href="#" class="card">
+                <img src ="avtar1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="avtar2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>Avatar:The way of water</h4>
+                        <div class="sub">
+                            <p>Sci-fi, 2022</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 7.5</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <img src ="Dune1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="Dune2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>Dune</h4>
+                        <div class="sub">
+                            <p>Adventure, 2021</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 8.0</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <img src ="gf1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="gf2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>The Godfather</h4>
+                        <div class="sub">
+                            <p>Crime, 1972</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 9.2</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <img src ="RRR1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="rrr2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>RRR</h4>
+                        <div class="sub">
+                            <p>Action, 2022</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 7.8</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <img src ="kgf1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="kgf2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>KGF</h4>
+                        <div class="sub">
+                            <p>Thriller, 2018</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 8.2</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            <a href="#" class="card">
+                <img src ="Sita1.jpeg" alt="" class="poster">
+                <div class="rest_card">
+                    <img src="sita2.jpeg" alt="">
+                    <div class="cont">
+                        <h4>Sita Ramam</h4>
+                        <div class="sub">
+                            <p>Romance, 2022</p>
+                            <h3><span>IMDB</span> <i class="bi bi-star-fill"></i> 8.5</h3>
+
+                        </div>
+                    </div>
+                </div>
+            </a>
+            </div>
+        </section>
+    </header>
+    <script>
+        async function getresults(event) {
+            event.preventDefault();
+            const query = document.getElementById('search_input').value;
+            const pageType = document.location.pathname.includes('series') ? 'series' :
+                             document.location.pathname.includes('movies') ? 'movie' :
+                             document.location.pathname.includes('anime') ? 'anime' : 'movie';
+            
+            try {
+                const response = await fetch('http://127.0.0.1:5000/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 'title': query, 'type': pageType })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const recommendations = await response.json();
+                localStorage.setItem('recommendResults', JSON.stringify(recommendations));
+                window.location.href = 'recom.html';
+            } catch (error) {
+                console.error('Fetch error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
